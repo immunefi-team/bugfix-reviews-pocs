@@ -1,0 +1,7 @@
+[submodule "lib/openzeppelin-contracts"]
+	path = lib/openzeppelin-contracts
+	url = https://github.com/openzeppelin/openzeppelin-contracts
+	branch = v4.8.1
+[submodule "lib/uniswap-v2-periphery"]
+	path = lib/uniswap-v2-periphery
+	url = https://github.com/Uniswap/uniswap-v2-periphery
