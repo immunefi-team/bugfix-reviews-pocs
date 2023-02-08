@@ -6,7 +6,7 @@ This repository contains all the proof of concepts (POCs) related to the article
 
 | Name | POC | Article | Command
 | ---- | ------- | ---- | ---- | 
-| Reentrancy vulnerability in DEMO | [POC 1](./POC1) | [Article 1](https://medium.com/immunefi/article1) | `forge test --match-contract DemoTest --fork-url $ALCHEMY_API -vvv`
+| Beanstalk logical vulnerability | [BeanStalkPoC](./test/BeanStalk.t.sol) | [BeanStalk Logical Vulnerability Postmoterm](https://medium.com/immunefi/article1) | `RPC_URL=$ALCHEMY_API forge test --match-contract BeanStalkPoC -vvv`
 
 
 ## Getting Started
