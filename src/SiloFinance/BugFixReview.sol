@@ -2,11 +2,7 @@ pragma solidity ^0.8.0;
 
 import "forge-std/console.sol";
 
-interface IERC20 {
-    function transfer(address reciever, uint256 amount)external;
-    function approve(address spender, uint256 amount)external;
-    function balanceOf(address owner)external view returns(uint256);
-}
+import "@openzeppelin/interfaces/IERC20.sol";
 
 interface ISilo {
     function deposit(address _asset, uint256 _amount, bool _collateralOnly)
