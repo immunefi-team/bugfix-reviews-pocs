@@ -7,6 +7,7 @@ This repository contains all the proof of concepts (POCs) related to the article
 | Name | POC | Article | Command
 | ---- | ------- | ---- | ---- | 
 | Beanstalk logical vulnerability | [BeanStalkPoC](./test/BeanStalk.t.sol) | [BeanStalk Logical Vulnerability Postmoterm](https://medium.com/immunefi/article1) | `RPC_URL=$ALCHEMY_API forge test --match-contract BeanStalkPoC -vvv`
+| DFX Finance Rounding Error | [DFXFinancePoC](./src/DFXFinance/AttackContract.sol) | [DFX Finance Bugfix Review](https://medium.com/immunefi/) | `forge test -vvv --match-path ./test/DFXFinance/AttackTest.t.sol`
 
 
 ## Getting Started
