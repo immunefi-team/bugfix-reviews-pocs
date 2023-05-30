@@ -1,4 +1,5 @@
 ds-test/=lib/forge-std/lib/ds-test/src/
 forge-std/=lib/forge-std/src/
+@immunefi/=lib/forge-poc-templates/src/
 @openzeppelin/=lib/openzeppelin-contracts/contracts/
 @uniswap-v2-periphery/=lib/uniswap-v2-periphery/contracts/
