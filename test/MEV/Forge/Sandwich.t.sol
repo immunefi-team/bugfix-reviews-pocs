@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import "../src/Attacker.sol";
+import "../../../src/MEV/Attacker.sol";
 
 contract Sandwich is Test {
     Attacker public attacker;
@@ -49,7 +49,7 @@ contract Sandwich is Test {
     }
 
     function _backun() internal {
-        attacker.secondSwap(USDC.balanceOf(address(attacker)));
+        attacker.secondSwap();
     }
 
     function testSandwich()public {
