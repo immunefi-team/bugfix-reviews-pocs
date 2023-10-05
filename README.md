@@ -10,6 +10,7 @@ This repository contains all the proof of concepts (POCs) related to the article
 | DFX Finance Rounding Error | [DFXFinancePoC](./src/DFXFinance/AttackContract.sol) | [DFX Finance Bugfix Review](https://medium.com/immunefi/) | `forge test -vvv --match-path ./test/DFXFinance/AttackTest.t.sol`
 | Yield protocol Logical Vulnerability| [YieldProtocolPoC](./test/YieldProtocol.t.sol) | [Yield Protocol Bugfix Review](https://medium.com/immunefi/) | `forge test -vvv --match-path ./test/YieldProtocol/AttackTest.t.sol`
 | MEV POC| [ForgeSandwichPOC](./test/MEV/Forge/Sandwich.t.sol) | [MEV POC Article](https://medium.com/immunefi/how-to-reproduce-a-simple-mev-attack-b38151616cb4) | `forge test -vvv --match-path ./test/MEV/Forge/Sandwich.t.sol`
+| Balancer Rounding Error | [BalancerPoC](./test/Balancer/rounding-error-aug2023/BalancerPoC.sol) | [Balancer Rounding Error Bugfix Review](https://medium.com/immunefi/) | `forge test -vvv --match-path ./test/Balancer/rounding-error-aug2023/BalancerPoC.sol`
 
 
 ## Getting Started

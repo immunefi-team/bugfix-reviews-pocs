@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
 import "@openzeppelin/interfaces/IERC20.sol";
-import "../../src/balancer-merkle-orchard-jan2023/Attacker.sol";
+import "../../../src/Balancer/balancer-merkle-orchard-jan2023/Attacker.sol";
 
 contract AttackerTest is Test {
     address claimer = 0x57b18C6717a2B1dCf94351d7C6167691425737DC;
