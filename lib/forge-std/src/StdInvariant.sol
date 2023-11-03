@@ -3,10 +3,15 @@ pragma solidity >=0.6.2 <0.9.0;
 
 pragma experimental ABIEncoderV2;
 
-contract InvariantTest {
+abstract contract StdInvariant {
     struct FuzzSelector {
         address addr;
         bytes4[] selectors;
+    }
+
+    struct FuzzInterface {
+        address addr;
+        string[] artifacts;
     }
 
     address[] private _excludedContracts;
@@ -20,6 +25,8 @@ contract InvariantTest {
     FuzzSelector[] private _targetedArtifactSelectors;
     FuzzSelector[] private _targetedSelectors;
 
+    FuzzInterface[] private _targetedInterfaces;
+
     // Functions for users:
     // These are intended to be called in tests.
 
@@ -29,6 +36,10 @@ contract InvariantTest {
 
     function excludeSender(address newExcludedSender_) internal {
         _excludedSenders.push(newExcludedSender_);
+    }
+
+    function excludeArtifact(string memory newExcludedArtifact_) internal {
+        _excludedArtifacts.push(newExcludedArtifact_);
     }
 
     function targetArtifact(string memory newTargetedArtifact_) internal {
@@ -51,12 +62,12 @@ contract InvariantTest {
         _targetedSenders.push(newTargetedSender_);
     }
 
+    function targetInterface(FuzzInterface memory newTargetedInterface_) internal {
+        _targetedInterfaces.push(newTargetedInterface_);
+    }
+
     // Functions for forge:
     // These are called by forge to run invariant tests and don't need to be called in tests.
-
-    function excludeArtifact(string memory newExcludedArtifact_) internal {
-        _excludedArtifacts.push(newExcludedArtifact_);
-    }
 
     function excludeArtifacts() public view returns (string[] memory excludedArtifacts_) {
         excludedArtifacts_ = _excludedArtifacts;
@@ -88,5 +99,9 @@ contract InvariantTest {
 
     function targetSenders() public view returns (address[] memory targetedSenders_) {
         targetedSenders_ = _targetedSenders;
+    }
+
+    function targetInterfaces() public view returns (FuzzInterface[] memory targetedInterfaces_) {
+        targetedInterfaces_ = _targetedInterfaces;
     }
 }
