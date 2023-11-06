@@ -4,7 +4,6 @@ pragma solidity >=0.6.2 <0.9.0;
 pragma experimental ABIEncoderV2;
 
 import {IMulticall3} from "./interfaces/IMulticall3.sol";
-// TODO Remove import.
 import {VmSafe} from "./Vm.sol";
 
 abstract contract StdUtils {
@@ -17,8 +16,13 @@ abstract contract StdUtils {
     address private constant CONSOLE2_ADDRESS = 0x000000000000000000636F6e736F6c652e6c6f67;
     uint256 private constant INT256_MIN_ABS =
         57896044618658097711785492504343953926634992332820282019728792003956564819968;
+    uint256 private constant SECP256K1_ORDER =
+        115792089237316195423570985008687907852837564279074904382605163141518161494337;
     uint256 private constant UINT256_MAX =
         115792089237316195423570985008687907853269984665640564039457584007913129639935;
+
+    // Used by default when deploying with create2, https://github.com/Arachnid/deterministic-deployment-proxy.
+    address private constant CREATE2_FACTORY = 0x4e59b44847b379578588920cA78FbF26c0B4956C;
 
     /*//////////////////////////////////////////////////////////////////////////
                                  INTERNAL FUNCTIONS
@@ -32,7 +36,7 @@ abstract contract StdUtils {
 
         uint256 size = max - min + 1;
 
-        // If the value is 0, 1, 2, 3, warp that to min, min+1, min+2, min+3. Similarly for the UINT256_MAX side.
+        // If the value is 0, 1, 2, 3, wrap that to min, min+1, min+2, min+3. Similarly for the UINT256_MAX side.
         // This helps ensure coverage of the min/max values.
         if (x <= 3 && size > x) return min + x;
         if (x >= UINT256_MAX - 3 && size > UINT256_MAX - x) return max - (UINT256_MAX - x);
@@ -56,7 +60,7 @@ abstract contract StdUtils {
         console2_log("Bound Result", result);
     }
 
-    function bound(int256 x, int256 min, int256 max) internal view virtual returns (int256 result) {
+    function _bound(int256 x, int256 min, int256 max) internal pure virtual returns (int256 result) {
         require(min <= max, "StdUtils bound(int256,int256,int256): Max is less than min.");
 
         // Shifting all int256 values to uint256 to use _bound function. The range of two types are:
@@ -74,7 +78,15 @@ abstract contract StdUtils {
 
         // To move it back to int256 value, subtract INT256_MIN_ABS at here.
         result = y < INT256_MIN_ABS ? int256(~(INT256_MIN_ABS - y) + 1) : int256(y - INT256_MIN_ABS);
+    }
+
+    function bound(int256 x, int256 min, int256 max) internal view virtual returns (int256 result) {
+        result = _bound(x, min, max);
         console2_log("Bound result", vm.toString(result));
+    }
+
+    function boundPrivateKey(uint256 privateKey) internal pure virtual returns (uint256 result) {
+        result = _bound(privateKey, 1, SECP256K1_ORDER - 1);
     }
 
     function bytesToUint(bytes memory b) internal pure virtual returns (uint256) {
@@ -114,6 +126,24 @@ abstract contract StdUtils {
         returns (address)
     {
         return addressFromLast20Bytes(keccak256(abi.encodePacked(bytes1(0xff), deployer, salt, initcodeHash)));
+    }
+
+    /// @dev returns the address of a contract created with CREATE2 using the default CREATE2 deployer
+    function computeCreate2Address(bytes32 salt, bytes32 initCodeHash) internal pure returns (address) {
+        return computeCreate2Address(salt, initCodeHash, CREATE2_FACTORY);
+    }
+
+    /// @dev returns the hash of the init code (creation code + no args) used in CREATE2 with no constructor arguments
+    /// @param creationCode the creation code of a contract C, as returned by type(C).creationCode
+    function hashInitCode(bytes memory creationCode) internal pure returns (bytes32) {
+        return hashInitCode(creationCode, "");
+    }
+
+    /// @dev returns the hash of the init code (creation code + ABI-encoded args) used in CREATE2
+    /// @param creationCode the creation code of a contract C, as returned by type(C).creationCode
+    /// @param args the ABI-encoded arguments to the constructor of C
+    function hashInitCode(bytes memory creationCode, bytes memory args) internal pure returns (bytes32) {
+        return keccak256(abi.encodePacked(creationCode, args));
     }
 
     // Performs a single call with Multicall3 to query the ERC-20 token balances of the given addresses.

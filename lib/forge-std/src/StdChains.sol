@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.6.2 <0.9.0;
 
-pragma experimental ABIEncoderV2;
-
 import {VmSafe} from "./Vm.sol";
 
 /**
@@ -11,7 +9,7 @@ import {VmSafe} from "./Vm.sol";
  * identified by their alias, which is the same as the alias in the `[rpc_endpoints]` section of
  * the `foundry.toml` file. For best UX, ensure the alias in the `foundry.toml` file match the
  * alias used in this contract, which can be found as the first argument to the
- * `setChainWithDefaultRpcUrl` call in the `initialize` function.
+ * `setChainWithDefaultRpcUrl` call in the `initializeStdChains` function.
  *
  * There are two main ways to use this contract:
  *   1. Set a chain with `setChain(string memory chainAlias, ChainData memory chain)` or
@@ -19,26 +17,24 @@ import {VmSafe} from "./Vm.sol";
  *   2. Get a chain with `getChain(string memory chainAlias)` or `getChain(uint256 chainId)`.
  *
  * The first time either of those are used, chains are initialized with the default set of RPC URLs.
- * This is done in `initialize`, which uses `setChainWithDefaultRpcUrl`. Defaults are recorded in
+ * This is done in `initializeStdChains`, which uses `setChainWithDefaultRpcUrl`. Defaults are recorded in
  * `defaultRpcUrls`.
  *
  * The `setChain` function is straightforward, and it simply saves off the given chain data.
  *
  * The `getChain` methods use `getChainWithUpdatedRpcUrl` to return a chain. For example, let's say
- * we want to retrieve `mainnet`'s RPC URL:
- *   - If you haven't set any mainnet chain info with `setChain`, you haven't specified that
- *     chain in `foundry.toml` and no env var is set, the default data and RPC URL will be returned.
- *   - If you have set a mainnet RPC URL in `foundry.toml` it will return that, if valid (e.g. if
- *     a URL is given or if an environment variable is given and that environment variable exists).
- *     Otherwise, the default data is returned.
- *   - If you specified data with `setChain` it will return that.
+ * we want to retrieve the RPC URL for `mainnet`:
+ *   - If you have specified data with `setChain`, it will return that.
+ *   - If you have configured a mainnet RPC URL in `foundry.toml`, it will return the URL, provided it
+ *     is valid (e.g. a URL is specified, or an environment variable is given and exists).
+ *   - If neither of the above conditions is met, the default data is returned.
  *
  * Summarizing the above, the prioritization hierarchy is `setChain` -> `foundry.toml` -> environment variable -> defaults.
  */
 abstract contract StdChains {
     VmSafe private constant vm = VmSafe(address(uint160(uint256(keccak256("hevm cheat code")))));
 
-    bool private initialized;
+    bool private stdChainsInitialized;
 
     struct ChainData {
         string name;
@@ -67,11 +63,13 @@ abstract contract StdChains {
     // Maps from a chain ID to it's alias.
     mapping(uint256 => string) private idToAlias;
 
+    bool private fallbackToDefaultRpcUrls = true;
+
     // The RPC URL will be fetched from config or defaultRpcUrls if possible.
     function getChain(string memory chainAlias) internal virtual returns (Chain memory chain) {
         require(bytes(chainAlias).length != 0, "StdChains getChain(string): Chain alias cannot be the empty string.");
 
-        initialize();
+        initializeStdChains();
         chain = chains[chainAlias];
         require(
             chain.chainId != 0,
@@ -83,7 +81,7 @@ abstract contract StdChains {
 
     function getChain(uint256 chainId) internal virtual returns (Chain memory chain) {
         require(chainId != 0, "StdChains getChain(uint256): Chain ID cannot be 0.");
-        initialize();
+        initializeStdChains();
         string memory chainAlias = idToAlias[chainId];
 
         chain = chains[chainAlias];
@@ -105,7 +103,7 @@ abstract contract StdChains {
 
         require(chain.chainId != 0, "StdChains setChain(string,ChainData): Chain ID cannot be 0.");
 
-        initialize();
+        initializeStdChains();
         string memory foundAlias = idToAlias[chain.chainId];
 
         require(
@@ -155,8 +153,12 @@ abstract contract StdChains {
             try vm.rpcUrl(chainAlias) returns (string memory configRpcUrl) {
                 chain.rpcUrl = configRpcUrl;
             } catch (bytes memory err) {
-                chain.rpcUrl =
-                    vm.envOr(string(abi.encodePacked(_toUpper(chainAlias), "_RPC_URL")), defaultRpcUrls[chainAlias]);
+                string memory envName = string(abi.encodePacked(_toUpper(chainAlias), "_RPC_URL"));
+                if (fallbackToDefaultRpcUrls) {
+                    chain.rpcUrl = vm.envOr(envName, defaultRpcUrls[chainAlias]);
+                } else {
+                    chain.rpcUrl = vm.envString(envName);
+                }
                 // distinguish 'not found' from 'cannot read'
                 bytes memory notFoundError =
                     abi.encodeWithSignature("CheatCodeError", string(abi.encodePacked("invalid rpc url ", chainAlias)));
@@ -171,21 +173,25 @@ abstract contract StdChains {
         return chain;
     }
 
-    function initialize() private {
-        if (initialized) return;
+    function setFallbackToDefaultRpcUrls(bool useDefault) internal {
+        fallbackToDefaultRpcUrls = useDefault;
+    }
 
-        initialized = true;
+    function initializeStdChains() private {
+        if (stdChainsInitialized) return;
+
+        stdChainsInitialized = true;
 
         // If adding an RPC here, make sure to test the default RPC URL in `testRpcs`
         setChainWithDefaultRpcUrl("anvil", ChainData("Anvil", 31337, "http://127.0.0.1:8545"));
         setChainWithDefaultRpcUrl(
-            "mainnet", ChainData("Mainnet", 1, "https://mainnet.infura.io/v3/6770454bc6ea42c58aac12978531b93f")
+            "mainnet", ChainData("Mainnet", 1, "https://mainnet.infura.io/v3/b9794ad1ddf84dfb8c34d6bb5dca2001")
         );
         setChainWithDefaultRpcUrl(
-            "goerli", ChainData("Goerli", 5, "https://goerli.infura.io/v3/6770454bc6ea42c58aac12978531b93f")
+            "goerli", ChainData("Goerli", 5, "https://goerli.infura.io/v3/b9794ad1ddf84dfb8c34d6bb5dca2001")
         );
         setChainWithDefaultRpcUrl(
-            "sepolia", ChainData("Sepolia", 11155111, "https://sepolia.infura.io/v3/6770454bc6ea42c58aac12978531b93f")
+            "sepolia", ChainData("Sepolia", 11155111, "https://sepolia.infura.io/v3/b9794ad1ddf84dfb8c34d6bb5dca2001")
         );
         setChainWithDefaultRpcUrl("optimism", ChainData("Optimism", 10, "https://mainnet.optimism.io"));
         setChainWithDefaultRpcUrl("optimism_goerli", ChainData("Optimism Goerli", 420, "https://goerli.optimism.io"));
@@ -210,6 +216,13 @@ abstract contract StdChains {
             ChainData("BNB Smart Chain Testnet", 97, "https://rpc.ankr.com/bsc_testnet_chapel")
         );
         setChainWithDefaultRpcUrl("gnosis_chain", ChainData("Gnosis Chain", 100, "https://rpc.gnosischain.com"));
+        setChainWithDefaultRpcUrl("moonbeam", ChainData("Moonbeam", 1284, "https://rpc.api.moonbeam.network"));
+        setChainWithDefaultRpcUrl(
+            "moonriver", ChainData("Moonriver", 1285, "https://rpc.api.moonriver.moonbeam.network")
+        );
+        setChainWithDefaultRpcUrl("moonbase", ChainData("Moonbase", 1287, "https://rpc.testnet.moonbeam.network"));
+        setChainWithDefaultRpcUrl("base_goerli", ChainData("Base Goerli", 84531, "https://goerli.base.org"));
+        setChainWithDefaultRpcUrl("base", ChainData("Base", 8453, "https://mainnet.base.org"));
     }
 
     // set chain info, with priority to chainAlias' rpc url in foundry.toml
