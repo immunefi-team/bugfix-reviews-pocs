@@ -12,6 +12,7 @@ This repository contains all the proof of concepts (POCs) related to the article
 | MEV POC| [ForgeSandwichPOC](./test/MEV/Forge/Sandwich.t.sol) | [MEV POC Article](https://medium.com/immunefi/how-to-reproduce-a-simple-mev-attack-b38151616cb4) | `forge test -vvv --match-path ./test/MEV/Forge/Sandwich.t.sol`
 | Balancer Rounding Error | [BalancerPoC](./test/Balancer/rounding-error-aug2023/BalancerPoC.sol) | [Balancer Rounding Error Bugfix Review](https://medium.com/immunefi/) | `forge test -vvv --match-path ./test/Balancer/rounding-error-aug2023/BalancerPoC.sol`
 | Alchemix Missing Solvency Check | [AlchemixPoC](./test/Alchemix/AttackContract.sol) | [Alchemix Missing Solvency Check](https://medium.com/immunefi/) | `forge test -vvv --match-path ./test/Alchemix/PoCTest.sol --via-ir`
+| Wormhole Uninitialized Proxy | [WormholePoC](./test/Wormhole/WormholeBugFix.t.sol) | [Wormhole Uninitialized Proxy](https://medium.com/immunefi/wormhole-uninitialized-proxy-bugfix-review-90250c41a43a) | `forge test -vvv --match-path ./test/Wormhole/WormholeBugFix.t.sol --via-ir`
 
 
 ## Getting Started
