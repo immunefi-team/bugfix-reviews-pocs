@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "@immunefi/PoC.sol";
 
 address constant wormholeImpl= 0x736D2A394f7810C17b3c6fEd017d5BC7D60c077d;
+string constant mnemonic = "test test test test test test test test test test test junk";
 
 interface IImplementation{
     struct GuardianSet {
@@ -30,7 +31,7 @@ contract WormholeBugFixReview is PoC {
     address wormholeImplAddr;
 
     address internal attacker;
-    uint256 attackerPrivateKey;
+
 
     function initializeAttack() public {
         console.log("\n>>> Initialize attack");
@@ -39,8 +40,8 @@ contract WormholeBugFixReview is PoC {
         //Convert bytes32 to address:
         wormholeImplAddr = address(uint160(uint256(implementation)));
         console.log("Is a contract?", isContract(wormholeImpl));
-        string memory mnemonic = "test test test test test test test test test test test junk";
-        attackerPrivateKey = vm.deriveKey(mnemonic, 0);
+
+        uint256 attackerPrivateKey = vm.deriveKey(mnemonic, 0);
         attacker = vm.addr(attackerPrivateKey);
         console.log("Attacker address: ", attacker);
 
