@@ -3,6 +3,8 @@ src = 'src'
 out = 'out'
 libs = ['lib']
 
+via_ir = true
+
 verbosity = 2
 
 rpc_endpoints = { mainnet = "https://rpc.ankr.com/eth" }
