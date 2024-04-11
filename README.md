@@ -6,6 +6,7 @@ This repository contains all the proof of concepts (POCs) related to the article
 
 | Name | POC | Article | Command
 | ---- | ------- | ---- | ---- | 
+| Alchemix Missing Access Control | [AlchemixPoC](./src/Alchemix/NoAccessControlAttackContract.sol) | [Alchemix Missing Access Control]() | `forge test -vvv --match-path ./test/Alchemix/PoCNoAccessControl.t.sol` |
 | Beanstalk logical vulnerability | [BeanStalkPoC](./test/BeanStalk.t.sol) | [BeanStalk Logical Vulnerability Postmoterm](https://medium.com/immunefi/beanstalk-logic-error-bugfix-review-4fea17478716) | `RPC_URL=$ALCHEMY_API forge test --match-contract BeanStalkPoC -vvv`
 | DFX Finance Rounding Error | [DFXFinancePoC](./src/DFXFinance/AttackContract.sol) | [DFX Finance Bugfix Review](https://medium.com/immunefi/dfx-finance-rounding-error-bugfix-review-17ba5ffb4114) | `forge test -vvv --match-path ./test/DFXFinance/AttackTest.t.sol`
 | Yield protocol Logical Vulnerability| [YieldProtocolPoC](./test/YieldProtocol/AttackTest.t.sol) | [Yield Protocol Bugfix Review](https://medium.com/immunefi/yield-protocol-logic-error-bugfix-review-7b86741e6f50) | `forge test -vvv --match-path ./test/YieldProtocol/AttackTest.t.sol`
