@@ -5,7 +5,7 @@ This repository contains all the proof of concepts (POCs) related to the article
 ## Table of Contents
 | Name | Reward (USD) | POC | Article | Command
 | ---- | ------- | ---- | ---- | ---- |
-| Alchemix Missing Access Control | $28,730 | [AlchemixPoC](./src/Alchemix/NoAccessControlAttackContract.sol) | [Alchemix Missing Access Control]() | `forge test -vvv --match-path ./test/Alchemix/PoCNoAccessControl.t.sol` |
+| Alchemix Missing Access Control | $28,730 | [AlchemixPoC](./src/Alchemix/NoAccessControlAttackContract.sol) | [Alchemix Missing Access Control](https://medium.com/immunefi/alchemix-access-control-issue-bugfix-review-2a8fbcddf588) | `forge test -vvv --match-path ./test/Alchemix/PoCNoAccessControl.t.sol` |
 | Beanstalk logical vulnerability | $181,850 | [BeanStalkPoC](./test/BeanStalk.t.sol) | [Bugfix Review: Beanstalk Logic Error](https://medium.com/immunefi/beanstalk-logic-error-bugfix-review-4fea17478716) | `RPC_URL=$ALCHEMY_API forge test --match-contract BeanStalkPoC -vvv` |
 | DFX Finance Rounding Error | $100,000 | [DFXFinancePoC](./src/DFXFinance/AttackContract.sol) | [Bugfix Review: DFX Finance Rounding Error](https://medium.com/immunefi/dfx-finance-rounding-error-bugfix-review-17ba5ffb4114) | `forge test -vvv --match-path ./test/DFXFinance/AttackTest.t.sol` |
 | Yield protocol Logical Vulnerability | $95,000 | [YieldProtocolPoC](./test/YieldProtocol/AttackTest.t.sol) | [Bugfix Review: Yield Protocol Logic Error](https://medium.com/immunefi/yield-protocol-logic-error-bugfix-review-7b86741e6f50) | `forge test -vvv --match-path ./test/YieldProtocol/AttackTest.t.sol` |
